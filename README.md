@@ -44,17 +44,13 @@ The dashboard is designed for both desktop and mobile operation and focuses on l
 * WiFi communication
 * GPIO-based sensor integration
 * Real-time browser updates
-* Planned USB mass-storage support
 
-### Hardware Support
-
-* TFT display integration
-* Touch support
-* RFID support
-* RTC integration
-* Smart card reader support
-* Camera streaming module support
-* External motor driver telemetry
+### GPS Module → PIN A1
+* GPS Module GPS6MV2
+* External GPS module connected to Arduino PIN A1
+* Used for:
+* Live GPS speed telemetry
+* Position tracking
 
 ---
 
@@ -73,16 +69,6 @@ The dashboard is designed for both desktop and mobile operation and focuses on l
 * ESP32 WebSocket communication
 * MJPEG HTTP video stream
 * Local network communication
-
-### Embedded Hardware
-
-* ESP32-S3-WROOM-1-N16R8
-* TFT display (ILI9341)
-* XPT2046 touch controller
-* RFID module
-* USB-C power integration
-* RTC module
-* Sensor array support
 
 ---
 
@@ -103,7 +89,7 @@ The dashboard is designed for both desktop and mobile operation and focuses on l
 * Front distance sensor
 * System state information
 
-### Video Module
+### Video Module ESP32cam
 
 * Embedded MJPEG stream
 * Optimized local streaming
