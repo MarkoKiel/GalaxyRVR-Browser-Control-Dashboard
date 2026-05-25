@@ -61,12 +61,11 @@ The GPS module is mounted directly on the acrylic plate of the rover chassis for
 
 <p align="center">
   <img 
-    src="https://github.com/MarkoKiel/GalaxyRVR-Browser-Control-Dashboard/blob/main/GalaxyRVR-GPS11.jpg" 
+    src="https://raw.githubusercontent.com/MarkoKiel/GalaxyRVR-Browser-Control-Dashboard/main/GalaxyRVR-GPS11.jpg" 
     width="49%"
   >
-  
-  <img 
-    src="https://github.com/MarkoKiel/GalaxyRVR-Browser-Control-Dashboard/blob/main/GalaxyRVR-GPS12.jpg" 
+    <img 
+    src="https://raw.githubusercontent.com/MarkoKiel/GalaxyRVR-Browser-Control-Dashboard/main/GalaxyRVR-GPS12.jpg" 
     width="49%"
   >
 </p>
