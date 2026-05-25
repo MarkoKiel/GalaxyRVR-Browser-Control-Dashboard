@@ -33,7 +33,7 @@ Change the following values:
 const char* ssid = "YOUR_WIFI_NAME";
 const char* password = "YOUR_WIFI_PASSWORD";
 
-Then upload the firmware to the ESP32/Arduino device.
+Then upload the firmware to the Arduino.
 
 ---
 
