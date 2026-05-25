@@ -52,6 +52,38 @@ The dashboard is designed for both desktop and mobile operation and focuses on l
 * Live GPS speed telemetry
 * Position tracking
 
+## GPS Module Installation
+
+The GalaxyRVR platform uses a GPS6MV2 GPS module for live telemetry and speed monitoring.
+
+### Mounting
+The GPS module is mounted directly on the acrylic plate of the rover chassis for improved satellite visibility and stable positioning.
+
+<p align="center">
+  <img 
+    src="https://github.com/MarkoKiel/GalaxyRVR-Browser-Control-Dashboard/blob/main/GalaxyRVR-GPS11.jpg" 
+    width="49%"
+  >
+  
+  <img 
+    src="https://github.com/MarkoKiel/GalaxyRVR-Browser-Control-Dashboard/blob/main/GalaxyRVR-GPS12.jpg" 
+    width="49%"
+  >
+</p>
+
+### Wiring
+
+| GPS6MV2 Pin | Arduino / ESP32 |
+|---|---|
+| VCC | 3.3V / 5V |
+| GND | GND |
+| TX | PIN A1 |
+| RX | Optional |
+
+GPS6MV2 TX → PIN A1
+
+
+
 ---
 
 ## Current Technical Stack
