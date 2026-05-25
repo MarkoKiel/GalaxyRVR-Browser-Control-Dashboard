@@ -1,0 +1,1119 @@
+﻿<!DOCTYPE html>
+<html lang="de" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalaxyRVR Dashboard</title>
+
+    <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --rvr-bg: #0b0f17;
+            --rvr-card: #121826;
+            --rvr-card-soft: #182033;
+            --rvr-border: rgba(255,255,255,.10);
+            --rvr-text: #e8edf7;
+            --rvr-muted: #8f9bb3;
+            --rvr-accent: #38d39f;
+            --rvr-danger: #ff5c7a;
+            --rvr-warning: #ffc857;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                radial-gradient(circle at top left, rgba(56,211,159,.12), transparent 35%),
+                radial-gradient(circle at bottom right, rgba(13,110,253,.16), transparent 35%),
+                var(--rvr-bg);
+            color: var(--rvr-text);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .dashboard-shell {
+            width: 100%;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 18px;
+        }
+
+        .topbar {
+            background: rgba(18,24,38,.82);
+            border: 1px solid var(--rvr-border);
+            border-radius: 22px;
+            padding: 14px 18px;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 18px 50px rgba(0,0,0,.25);
+        }
+
+        .brand-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--rvr-accent);
+            box-shadow: 0 0 18px var(--rvr-accent);
+            display: inline-block;
+        }
+
+        .rvr-card {
+            background: rgba(18,24,38,.92);
+            border: 1px solid var(--rvr-border);
+            border-radius: 22px;
+            box-shadow: 0 18px 50px rgba(0,0,0,.22);
+            overflow: hidden;
+        }
+
+        .rvr-card-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--rvr-border);
+            background: rgba(255,255,255,.025);
+        }
+
+        .video-box {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            background: #000;
+            overflow: hidden;
+            border-radius: 0 0 22px 22px;
+        }
+
+        .video-box object {
+            display: block;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: #000;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.06);
+            border: 1px solid var(--rvr-border);
+            color: var(--rvr-muted);
+            font-size: .875rem;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--rvr-warning);
+            box-shadow: 0 0 12px var(--rvr-warning);
+        }
+
+        .status-dot.online {
+            background: var(--rvr-accent);
+            box-shadow: 0 0 12px var(--rvr-accent);
+        }
+
+        .status-dot.offline {
+            background: var(--rvr-danger);
+            box-shadow: 0 0 12px var(--rvr-danger);
+        }
+
+        .control-pad {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            aspect-ratio: 1 / 1;
+            margin: 0 auto;
+            border-radius: 24px;
+            cursor: crosshair;
+            touch-action: none;
+            overflow: hidden;
+            border: 1px solid var(--rvr-border);
+            background:
+                linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px),
+                radial-gradient(circle at center, rgba(56,211,159,.20), transparent 22%),
+                var(--rvr-card-soft);
+            background-size: 32px 32px, 32px 32px, 100% 100%, 100% 100%;
+        }
+
+        .control-pad::before,
+        .control-pad::after {
+            content: "";
+            position: absolute;
+            background: rgba(255,255,255,.18);
+        }
+
+        .control-pad::before {
+            width: 1px;
+            height: 100%;
+            left: 50%;
+            top: 0;
+        }
+
+        .control-pad::after {
+            height: 1px;
+            width: 100%;
+            top: 50%;
+            left: 0;
+        }
+
+        .map-indicator {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--rvr-accent);
+            border: 3px solid rgba(255,255,255,.85);
+            box-shadow: 0 0 28px rgba(56,211,159,.75);
+            transform: translate(-50%, -50%);
+            z-index: 5;
+        }
+
+        .value-box {
+            background: rgba(255,255,255,.055);
+            border: 1px solid var(--rvr-border);
+            border-radius: 16px;
+            padding: 12px;
+        }
+
+        .value-label {
+            color: var(--rvr-muted);
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .value-display {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--rvr-text);
+        }
+
+        .battery-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            color: var(--rvr-muted);
+            font-size: .82rem;
+        }
+
+        .battery-track {
+            margin-top: 8px;
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: rgba(255,255,255,.08);
+            border: 1px solid var(--rvr-border);
+        }
+
+        .battery-fill {
+            width: 0%;
+            height: 100%;
+            transition: width .25s ease, background-color .25s ease;
+            background: var(--rvr-danger);
+        }
+
+        .form-range::-webkit-slider-thumb {
+            background: var(--rvr-accent);
+        }
+
+        .form-range::-moz-range-thumb {
+            background: var(--rvr-accent);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--rvr-accent);
+            border-color: var(--rvr-accent);
+        }
+
+       #log {
+    flex: 1;
+
+    min-height: 0;
+    height: 100px;
+
+    margin: 0;
+    padding: 14px;
+
+    overflow-y: auto;
+
+    white-space: pre-wrap;
+
+    color: #4dff88;
+
+    background:
+        linear-gradient(
+            rgba(0, 255, 120, 0.04),
+            rgba(0, 255, 120, 0.02)
+        ),
+        #020805;
+
+    border-top: 1px solid rgba(0,255,120,.15);
+
+    text-shadow:
+        0 0 4px rgba(0,255,120,.35);
+
+    border-radius: 0 0 22px 22px;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: .82rem;
+
+    line-height: 1.45;
+}
+
+        @media (max-width: 991.98px) {
+            .dashboard-shell {
+                padding: 12px;
+            }
+
+            .topbar {
+                border-radius: 18px;
+            }
+
+            .rvr-card {
+                border-radius: 18px;
+            }
+
+            .video-box {
+                border-radius: 0 0 18px 18px;
+            }
+        }
+		
+.rvr-image-box {
+    position: relative;
+
+    height: 260px;
+
+    padding: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #111726;
+
+    overflow: hidden;
+}
+
+.rvr-image {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    transform: rotate(180deg);
+
+    image-rendering: auto;
+}
+
+.sensor-front {
+    position: absolute;
+
+    top: 0px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 20;
+
+    min-width: 90px;
+
+    padding: 6px 12px;
+
+
+    text-align: center;
+
+    color: #4dff88;
+
+    font-size: 1.3rem;
+    font-weight: 700;
+
+
+}
+
+.gps-speed-box {
+    position: absolute;
+
+    top: 62px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 20;
+
+    min-width: 160px;
+
+    padding: 10px 18px;
+
+    text-align: center;
+
+}
+
+.gps-speed-label {
+    font-size: .72rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #8f9bb3;
+    margin-bottom: 2px;
+}
+
+.gps-speed-label-km {
+    font-size: .72rem;
+    letter-spacing: .14em;
+    color: #8f9bb3;
+    margin-top: 2px;
+}
+
+.gps-speed-value {
+    color: #4dff88;
+
+    font-size: 1rem;
+    font-weight: 700;
+
+    line-height: 1;
+}
+
+.motor-overlay {
+    position: absolute;
+
+    top: 125px;
+    left: 0;
+    right: 0;
+
+    z-index: 20;
+
+    pointer-events: none;
+}
+
+.motor-box {
+    position: absolute;
+top:-20px;
+    width: 95px;
+
+    padding: 10px 12px;
+
+    text-align: center;
+
+}
+
+.motor-left {
+    left: 0px;
+}
+
+.motor-right {
+    right: 0px;
+}
+
+.motor-value {
+    color: #4dff88;
+
+    font-size: 1.6rem;
+    font-weight: 700;
+
+    line-height: 1;
+}
+.value-label{font-size:.7rem;}
+    </style>
+</head>
+
+<body>
+
+<div class="dashboard-shell">
+
+    <div class="topbar mb-3">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="brand-dot"></span>
+                    <h1 class="h4 mb-0">GalaxyRVR Dashboard</h1>
+                </div>
+                <div class="text-secondary small mt-1">
+                    ESP32-CAM Control · WebSocket · Live Stream
+                </div>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+                <span class="status-pill">
+                    <span id="connectionDot" class="status-dot"></span>
+                    <span id="connectionText">Connecting...</span>
+                </span>
+                <span class="status-pill">
+                    <span>Auto reconnect</span>
+                    <div class="form-check form-switch m-0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="autoReconnectToggle" checked>
+                    </div>
+                </span>
+                <span class="status-pill">
+                    GPS
+                    <strong id="topGpsFix">No Fix</strong>
+                    <span>| Sat <strong id="topGpsSat">0</strong></span>
+                    <span>| <strong id="topGpsSpeed">0.0</strong> km/h</span>
+                </span>
+                <span class="status-pill">
+                    Host: <strong id="ipLabel">galaxyrvr.local</strong>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+	
+		<div class="col-12 col-xl-3">
+            <div class="row g-3">
+
+
+                <div class="col-12">
+
+					<div class="rvr-card">
+
+						<div class="rvr-card-header">
+							<strong>GalaxyRVR</strong>
+						</div>
+
+						<div class="rvr-image-box">
+
+							<div class="sensor-front">
+								<div id="oValue" class="value-display">N/A</div>
+							</div>
+							<div class="gps-speed-box">
+
+								<div class="gps-speed-label">
+									GPS speed
+								</div>
+
+								<div id="gpsSpeedValue" class="gps-speed-value">
+									0.0
+								</div>
+								<div class="gps-speed-label-km">
+									km/h
+								</div>
+
+							</div>
+							<div class="motor-overlay">
+
+								<div class="motor-box motor-left">
+
+									<div class="value-label">
+										Motor K
+									</div>
+
+									<div id="kValue" class="motor-value">
+										0
+									</div>
+
+								</div>
+
+								<div class="motor-box motor-right">
+
+									<div class="value-label">
+										Motor Q
+									</div>
+
+									<div id="qValue" class="motor-value">
+										0
+									</div>
+
+								</div>
+
+							</div>
+							<img
+								src="images/galaxyrvr.png"
+								class="rvr-image"
+								alt="GalaxyRVR">
+
+						</div>
+
+					</div>
+
+				</div>
+				
+				<div class="col-12">
+                    <div class="rvr-card">
+                        <div class="rvr-card-header">
+                            <strong>Controls</strong>
+                        </div>
+
+                        <div class="p-3">
+
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" role="switch" id="stripCheckbox" checked>
+                                <label class="form-check-label" for="stripCheckbox">
+                                    RGB Strip Region L
+                                </label>
+                            </div>
+
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" role="switch" id="followCheckbox">
+                                <label class="form-check-label" for="followCheckbox">
+                                    Follow Region F
+                                </label>
+                            </div>
+
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" role="switch" id="avoidCheckbox">
+                                <label class="form-check-label" for="avoidCheckbox">
+                                    Avoid Region E
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				
+				<div class="col-12">
+                            <div class="value-box">
+                                <div class="value-label">Battery</div>
+                                <div id="bvValue" class="value-display">N/A V</div>
+                                <div class="battery-meta">
+                                    <span id="batteryStateValue">Unknown</span>
+                                    <strong id="batteryPercentValue">N/A%</strong>
+                                </div>
+                                <div class="battery-track">
+                                    <div id="batteryBar" class="battery-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-6">
+            <div class="rvr-card h-100">
+                <div class="rvr-card-header d-flex justify-content-between align-items-center">
+                    <strong>Live Camera</strong>
+                    <span class="text-secondary small">MJPEG Stream</span>
+                </div>
+
+                <div class="video-box">
+                    <object
+                        id="video"
+                        data="http://192.168.2.195:9000/mjpg"
+                        type="image/jpeg">
+                    </object>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-3">
+            <div class="row g-3">
+
+                <div class="col-12">
+                    <div class="rvr-card mb-3">
+                        <div class="rvr-card-header">
+                            <strong>Drive Control</strong>
+                            <div class="text-secondary small">Hold touch or mouse button</div>
+                        </div>
+
+                        <div class="p-3">
+                            <div class="control-pad" id="clickableMap">
+                                <div class="map-indicator" id="mapIndicator"></div>
+                            </div>
+                        </div>
+						
+                    </div>
+					
+					
+					<div class="rvr-card">
+                        <div class="rvr-card-header">
+                            <strong>ESP32 camera</strong>
+                        </div>
+						
+						<div class="p-3">
+							<div class="form-check form-switch mt-3">
+                                <input class="form-check-input" type="checkbox" role="switch" id="ledCheckbox">
+                                <label class="form-check-label" for="ledCheckbox">
+                                    Camera LED Region M
+                                </label>
+                            </div>
+						</div>
+                        <div class="p-3">
+                            
+							<label for="servo" class="form-label d-flex justify-content-between">
+                                <span>Camera Servo Region D</span>
+                                <strong><span id="servoValue">90</span>°</strong>
+                            </label>
+
+                            <input type="range" class="form-range" id="servo" min="0" max="180" value="90">
+                            
+                        </div>
+                    </div>
+					
+					
+                </div>
+				
+				
+
+                
+            </div>
+        </div>
+		
+
+        <div class="col-12 col-xl-8">
+            <div class="rvr-card">
+                <div class="rvr-card-header">
+                    <strong>Telemetry</strong>
+                </div>
+
+                <div class="p-3">
+                    <div class="row g-2">
+                        
+                        <div class="col-6 col-md">
+                            <div class="value-box">
+                                <div class="value-label">J</div>
+                                <div id="jValue" class="value-display">N/A</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md">
+                            <div class="value-box">
+                                <div class="value-label">N</div>
+                                <div id="nValue" class="value-display">N/A</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md">
+                            <div class="value-box">
+                                <div class="value-label">P</div>
+                                <div id="pValue" class="value-display">N/A</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <div class="rvr-card" style="color:">
+                <div class="rvr-card-header d-flex justify-content-between align-items-center">
+                    <strong>Log</strong>
+                    <button type="button" class="btn btn-sm btn-outline-light" id="clearLogBtn">
+                        Clear
+                    </button>
+                </div>
+                <pre id="log"></pre>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const DEFAULT_DEVICE_HOST = 'galaxyrvr.local';
+    const WEBSOCKET_PORT = 8765;
+    const RECONNECT_DELAY_MS = 1500;
+    const CONTROL_SEND_INTERVAL_MS = 180;
+    const CONTROL_KEEPALIVE_MS = 900;
+
+    const params = new URLSearchParams(window.location.search);
+    const DEVICE_HOST = (params.get('host') || DEFAULT_DEVICE_HOST).trim();
+
+    const videoElement = document.getElementById('video');
+    videoElement.data = `http://${DEVICE_HOST}:9000/mjpg`;
+
+    document.getElementById('ipLabel').textContent = DEVICE_HOST;
+
+    const servo = document.getElementById('servo');
+    const servoValue = document.getElementById('servoValue');
+    const ledCheckbox = document.getElementById('ledCheckbox');
+    const stripCheckbox = document.getElementById('stripCheckbox');
+    const followCheckbox = document.getElementById('followCheckbox');
+    const avoidCheckbox = document.getElementById('avoidCheckbox');
+    const autoReconnectToggle = document.getElementById('autoReconnectToggle');
+
+    let followModeEnabled = false;
+    let avoidModeEnabled = false;
+    let autoReconnectEnabled = true;
+
+    const bvValue = document.getElementById('bvValue');
+    const batteryPercentValue = document.getElementById('batteryPercentValue');
+    const batteryStateValue = document.getElementById('batteryStateValue');
+    const batteryBar = document.getElementById('batteryBar');
+    const jValue = document.getElementById('jValue');
+    const nValue = document.getElementById('nValue');
+    const oValue = document.getElementById('oValue');
+    const pValue = document.getElementById('pValue');
+    const gpsSpeedValue = document.getElementById('gpsSpeedValue');
+    const topGpsFix = document.getElementById('topGpsFix');
+    const topGpsSat = document.getElementById('topGpsSat');
+    const topGpsSpeed = document.getElementById('topGpsSpeed');
+
+    const kValue = document.getElementById('kValue');
+    const qValue = document.getElementById('qValue');
+
+    const clickableMap = document.getElementById('clickableMap');
+    const mapIndicator = document.getElementById('mapIndicator');
+
+    const logElement = document.getElementById('log');
+    const clearLogBtn = document.getElementById('clearLogBtn');
+
+    const connectionDot = document.getElementById('connectionDot');
+    const connectionText = document.getElementById('connectionText');
+
+    let throttle1Value = 0;
+    let throttle2Value = 0;
+    let isDragging = false;
+    let sendInterval = null;
+    let lastControlPayload = '';
+    let lastControlSendTs = 0;
+
+    let ws = null;
+    let reconnectTimer = null;
+
+    function setConnectionState(state, text) {
+        connectionDot.className = 'status-dot ' + state;
+        connectionText.textContent = text;
+    }
+
+    function log(message) {
+        const time = new Date().toLocaleTimeString();
+        logElement.textContent += `[${time}] ${message}\n`;
+        logElement.scrollTop = logElement.scrollHeight;
+    }
+
+    function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    function batteryPercentFromVoltage(voltage) {
+        const minV = 6.6;
+        const maxV = 8.4;
+        const ratio = (voltage - minV) / (maxV - minV);
+        return Math.round(clamp(ratio, 0, 1) * 100);
+    }
+
+    function batteryStateFromPercent(percent) {
+        if (percent <= 20) {
+            return 'Low';
+        }
+
+        if (percent <= 60) {
+            return 'Medium';
+        }
+
+        return 'High';
+    }
+
+    function renderBattery(voltage) {
+        if (!Number.isFinite(voltage) || voltage <= 0) {
+            bvValue.textContent = 'N/A V';
+            batteryPercentValue.textContent = 'N/A%';
+            batteryStateValue.textContent = 'Unknown';
+            batteryBar.style.width = '0%';
+            batteryBar.style.backgroundColor = 'var(--rvr-danger)';
+            return;
+        }
+
+        const percent = batteryPercentFromVoltage(voltage);
+
+        bvValue.textContent = `${voltage.toFixed(2)} V`;
+        batteryPercentValue.textContent = `${percent}%`;
+        batteryStateValue.textContent = batteryStateFromPercent(percent);
+        batteryBar.style.width = `${percent}%`;
+
+        if (percent <= 20) {
+            batteryBar.style.backgroundColor = 'var(--rvr-danger)';
+        } else if (percent <= 60) {
+            batteryBar.style.backgroundColor = 'var(--rvr-warning)';
+        } else {
+            batteryBar.style.backgroundColor = 'var(--rvr-accent)';
+        }
+    }
+
+    function renderGps(messageJson) {
+        const hasFix = Number(messageJson.GFX) === 1;
+
+        if ('GFX' in messageJson) {
+            topGpsFix.textContent = hasFix ? 'Fix' : 'No Fix';
+        }
+
+        if ('GSA' in messageJson) {
+            const satCount = Number(messageJson.GSA);
+            const satText = Number.isFinite(satCount) ? String(Math.round(satCount)) : '0';
+            topGpsSat.textContent = satText;
+        }
+
+        if ('GSP' in messageJson) {
+            const speed = Number(messageJson.GSP);
+            const speedText = Number.isFinite(speed) ? `${speed.toFixed(1)}` : '0.0';
+            gpsSpeedValue.textContent = speedText;
+            topGpsSpeed.textContent = speedText;
+        }
+    }
+
+    function updateMotorDisplay() {
+        kValue.textContent = Math.round(throttle1Value);
+        qValue.textContent = Math.round(throttle2Value);
+    }
+
+    function updateThrottleValues(event) {
+        if (!isDragging) {
+            return;
+        }
+
+        if (event.cancelable) {
+            event.preventDefault();
+        }
+
+        const rect = clickableMap.getBoundingClientRect();
+        const point = event.touches ? event.touches[0] : event;
+
+        let x = point.clientX - rect.left;
+        let y = point.clientY - rect.top;
+
+        x = Math.max(0, Math.min(rect.width, x));
+        y = Math.max(0, Math.min(rect.height, y));
+
+        const normalizedY = Math.round(100 - ((y / rect.height) * 200));
+        const normalizedX = Math.round(((x / rect.width) * 200) - 100);
+
+        throttle1Value = normalizedY + (normalizedX / 2);
+        throttle2Value = normalizedY - (normalizedX / 2);
+
+        throttle1Value = Math.max(-100, Math.min(100, throttle1Value));
+        throttle2Value = Math.max(-100, Math.min(100, throttle2Value));
+
+        mapIndicator.style.left = `${x}px`;
+        mapIndicator.style.top = `${y}px`;
+
+        updateMotorDisplay();
+    }
+
+    function clearSendLoop() {
+        if (sendInterval) {
+            clearInterval(sendInterval);
+            sendInterval = null;
+        }
+    }
+
+    function resetThrottleValues() {
+        throttle1Value = 0;
+        throttle2Value = 0;
+
+        mapIndicator.style.left = '50%';
+        mapIndicator.style.top = '50%';
+
+        updateMotorDisplay();
+        sendControlValues(true);
+    }
+
+    function sendControlValues(force = false) {
+        const data = {
+            K: Math.round(throttle1Value),
+            Q: Math.round(throttle2Value),
+            D: parseInt(servo.value, 10),
+            M: ledCheckbox.checked ? 1 : 0,
+            L: stripCheckbox.checked ? 1 : 0,
+            E: avoidModeEnabled ? 1 : 0,
+            F: followModeEnabled ? 1 : 0
+        };
+
+        const payload = JSON.stringify(data);
+        const now = Date.now();
+        const keepaliveDue = now - lastControlSendTs >= CONTROL_KEEPALIVE_MS;
+
+        if (!force && payload === lastControlPayload && !keepaliveDue) {
+            return;
+        }
+
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(payload);
+            lastControlPayload = payload;
+            lastControlSendTs = now;
+        }
+    }
+
+    function setFollowMode(enabled) {
+        followModeEnabled = enabled;
+        avoidModeEnabled = false;
+
+        followCheckbox.checked = followModeEnabled;
+        avoidCheckbox.checked = false;
+
+        if (followModeEnabled) {
+            resetThrottleValues();
+        }
+
+        sendControlValues(true);
+    }
+
+    function setAvoidMode(enabled) {
+        avoidModeEnabled = enabled;
+        followModeEnabled = false;
+
+        avoidCheckbox.checked = avoidModeEnabled;
+        followCheckbox.checked = false;
+
+        if (avoidModeEnabled) {
+            resetThrottleValues();
+        }
+
+        sendControlValues(true);
+    }
+
+    function scheduleReconnect() {
+        if (!autoReconnectEnabled) {
+            return;
+        }
+
+        if (reconnectTimer) {
+            return;
+        }
+
+        setConnectionState('offline', 'Reconnecting...');
+
+        reconnectTimer = setTimeout(() => {
+            reconnectTimer = null;
+            connectWebSocket();
+        }, RECONNECT_DELAY_MS);
+    }
+
+    function connectWebSocket() {
+        if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+            return;
+        }
+
+        setConnectionState('', 'Verbinde...');
+        ws = new WebSocket(`ws://${DEVICE_HOST}:${WEBSOCKET_PORT}`);
+
+        ws.onopen = () => {
+            setConnectionState('online', 'Connected');
+            log('Connected to WebSocket');
+
+            clearSendLoop();
+            sendControlValues(true);
+            sendInterval = setInterval(sendControlValues, CONTROL_SEND_INTERVAL_MS);
+        };
+
+        ws.onmessage = (event) => {
+            const messageData = event.data;
+
+            try {
+                const messageJson = JSON.parse(messageData);
+
+                if ('BV' in messageJson) {
+                    renderBattery(Number(messageJson.BV));
+                }
+
+                if ('O' in messageJson) {
+                    oValue.textContent = Number(messageJson.O).toFixed(2);
+                }
+
+                if ('J' in messageJson) {
+                    jValue.textContent = messageJson.J;
+                }
+
+                if ('N' in messageJson) {
+                    nValue.textContent = messageJson.N;
+                }
+
+                if ('P' in messageJson) {
+                    pValue.textContent = messageJson.P;
+                }
+
+                if ('GFX' in messageJson || 'GLA' in messageJson || 'GLO' in messageJson || 'GSP' in messageJson || 'GSA' in messageJson) {
+                    renderGps(messageJson);
+                }
+
+            } catch (err) {
+                if (messageData === 'pong') {
+                    ws.send('ping');
+                    log('Ping/Pong');
+                } else {
+                    log(`Received: ${messageData}`);
+                }
+            }
+        };
+
+        ws.onclose = () => {
+            setConnectionState('offline', 'Disconnected');
+            log('Disconnected from WebSocket');
+            clearSendLoop();
+            scheduleReconnect();
+        };
+
+        ws.onerror = (error) => {
+            console.error(error);
+            log('WebSocket Error');
+        };
+    }
+
+    clearLogBtn.addEventListener('click', () => {
+        logElement.textContent = '';
+    });
+
+    autoReconnectToggle.addEventListener('change', (event) => {
+        autoReconnectEnabled = event.target.checked;
+
+        if (autoReconnectEnabled) {
+            log('Auto reconnect enabled');
+            if (!ws || ws.readyState === WebSocket.CLOSED) {
+                scheduleReconnect();
+            }
+        } else {
+            log('Auto reconnect disabled');
+            if (reconnectTimer) {
+                clearTimeout(reconnectTimer);
+                reconnectTimer = null;
+            }
+        }
+    });
+
+    clickableMap.addEventListener('mousedown', (event) => {
+        isDragging = true;
+        updateThrottleValues(event);
+    });
+
+    clickableMap.addEventListener('touchstart', (event) => {
+        isDragging = true;
+        updateThrottleValues(event);
+    }, { passive: false });
+
+    window.addEventListener('mousemove', updateThrottleValues);
+    window.addEventListener('touchmove', updateThrottleValues, { passive: false });
+
+    window.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            resetThrottleValues();
+        }
+    });
+
+    window.addEventListener('touchend', () => {
+        if (isDragging) {
+            isDragging = false;
+            resetThrottleValues();
+        }
+    });
+
+    servo.addEventListener('input', (event) => {
+        servoValue.textContent = event.target.value;
+        sendControlValues(true);
+    });
+
+    ledCheckbox.addEventListener('change', () => sendControlValues(true));
+    stripCheckbox.addEventListener('change', () => sendControlValues(true));
+    followCheckbox.addEventListener('change', (event) => setFollowMode(event.target.checked));
+    avoidCheckbox.addEventListener('change', (event) => setAvoidMode(event.target.checked));
+
+    renderBattery(NaN);
+    resetThrottleValues();
+    connectWebSocket();
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
