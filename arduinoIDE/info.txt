@@ -1,1 +1,61 @@
+## GPS Module Installation
 
+The GalaxyRVR dashboard uses a **GPS6MV2 GPS module** connected to the Arduino/ESP32 platform.
+
+### Wiring
+
+| GPS6MV2 Pin | Arduino / ESP32 |
+| ----------- | --------------- |
+| VCC         | 3.3V / 5V       |
+| GND         | GND             |
+| TX          | PIN A1          |
+| RX          | Optional        |
+
+```text id="u1qf7k"
+GPS6MV2 TX → PIN A1
+```
+
+The GPS module is used for:
+
+* Live GPS speed display
+* Position tracking
+* Future navigation functions
+
+---
+
+## WiFi Configuration
+
+Before uploading the firmware, update your WiFi credentials in:
+
+```text id="z98pmx"
+galaxy-rvr-gps.ino
+```
+
+Change the following values:
+
+```cpp id="kvv8s4"
+const char* ssid = "YOUR_WIFI_NAME";
+const char* password = "YOUR_WIFI_PASSWORD";
+```
+
+Then upload the firmware to the ESP32/Arduino device.
+
+---
+
+## Required Libraries
+
+Depending on your setup, install:
+
+* TinyGPS++
+* WiFi library for ESP32
+
+Example:
+
+```cpp id="e1p49z"
+#include <TinyGPS++.h>
+#include <WiFi.h>
+```
+
+NEO-6M GPS Module
+Arduino
+Espressif Systems
