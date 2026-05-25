@@ -11,9 +11,8 @@ The GalaxyRVR dashboard uses a **GPS6MV2 GPS module** connected to the Arduino/E
 | TX          | PIN A1          |
 | RX          | Optional        |
 
-```text id="u1qf7k"
+
 GPS6MV2 TX → PIN A1
-```
 
 The GPS module is used for:
 
@@ -27,16 +26,12 @@ The GPS module is used for:
 
 Before uploading the firmware, update your WiFi credentials in:
 
-```text id="z98pmx"
 galaxy-rvr-gps.ino
-```
 
 Change the following values:
 
-```cpp id="kvv8s4"
 const char* ssid = "YOUR_WIFI_NAME";
 const char* password = "YOUR_WIFI_PASSWORD";
-```
 
 Then upload the firmware to the ESP32/Arduino device.
 
@@ -51,10 +46,8 @@ Depending on your setup, install:
 
 Example:
 
-```cpp id="e1p49z"
 #include <TinyGPS++.h>
 #include <WiFi.h>
-```
 
 NEO-6M GPS Module
 Arduino
