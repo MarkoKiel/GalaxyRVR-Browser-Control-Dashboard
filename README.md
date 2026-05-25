@@ -8,7 +8,7 @@ The dashboard is designed for both desktop and mobile operation and focuses on l
 
 <p align="center">
   <img 
-    src="https://github.com/MarkoKiel/GalaxyRVR-Control-Dashboard/blob/main/ScreenshotGalaxyRVRDashboard.png"
+    src="https://github.com/MarkoKiel/GalaxyRVR-Browser-Control-Dashboard/blob/main/ScreenshotGalaxyRVR-Dashboard.png"
   >
 </p>
 
